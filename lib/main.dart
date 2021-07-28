@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import './styles/buttons.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import './views/home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      // TODO: set debug to false
+      debug: true);
+
   runApp(App());
 }
 
@@ -24,106 +30,4 @@ class App extends StatelessWidget {
       home: Home(title: 'Downloader'),
     );
   }
-}
-
-class Home extends StatefulWidget {
-  const Home({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Theme.of(context).accentColor),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showDownloaderModal(context);
-              },
-              icon: Icon(
-                Icons.add,
-                color: Theme.of(context).accentColor,
-                size: 30,
-              ))
-        ],
-      ),
-      backgroundColor: Theme.of(context).accentColor,
-      body: const Text("hi"),
-    );
-  }
-}
-
-showDownloaderModal(BuildContext context) {
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Theme.of(context).accentColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(17.0)),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                  '800mb',
-                  style: TextStyle(color: Theme.of(context).disabledColor),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(5.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Link: ",
-                      ),
-                      TextField(
-                        autofocus: true,
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(5.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Name: ",
-                      ),
-                      TextField()
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: CustomButtonStyle.textButtonSecondary,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                'Download',
-                style: CustomButtonStyle.textButtonPrimary,
-              ),
-              onPressed: () {},
-            ),
-          ],
-        );
-      });
 }
