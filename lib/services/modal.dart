@@ -2,46 +2,51 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:downloader/views/home.dart';
 import 'package:ext_storage/ext_storage.dart';
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 import '../styles/buttons.dart';
 
 var taskId;
+
+String fileSize = '';
 
 TextEditingController linkController = TextEditingController();
 TextEditingController nameController = TextEditingController();
 
 void downloadCallback(String id, DownloadTaskStatus status, int progress) {
   final SendPort? send = IsolateNameServer.lookupPortByName('downloaderport');
-  send?.send({"id": id, "status": status, "progress": progress});
+  send?.send({
+    "id": id,
+    "status": status,
+    "progress": progress,
+  });
 }
 
 download(BuildContext context, String link, String fileName) async {
   var downloadsDirectory = await ExtStorage.getExternalStoragePublicDirectory(
       ExtStorage.DIRECTORY_DOWNLOADS);
+
+  http.Response res = await http.head(Uri.parse(
+      "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-602.exe"));
+  print(res.headers['content-length']);
+  fileSize = filesize(res.headers['content-length']);
+
   if (Directory(downloadsDirectory).existsSync()) {
-    PermissionStatus status = await Permission.storage.request();
+    taskId = await FlutterDownloader.enqueue(
+      url:
+          "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-602.exe",
+      savedDir: downloadsDirectory,
+      fileName: fileName,
+      showNotification: true,
+      openFileFromNotification: true,
+    );
 
-    if (status.isGranted) {
-      taskId = await FlutterDownloader.enqueue(
-        url:
-            "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-602.exe",
-        savedDir: downloadsDirectory,
-        fileName: fileName,
-        showNotification: true,
-        openFileFromNotification: true,
-      );
-
-      Navigator.of(context).pop();
-    } else if (status.isPermanentlyDenied) {
-      // TODO: show snackbar
-      openAppSettings();
-    }
+    Navigator.of(context).pop();
   } else {
     Directory(downloadsDirectory).createSync();
   }
@@ -114,6 +119,7 @@ showDownloaderModal(BuildContext context) {
                   // TODO: show snackbar for empty inputs
                 } else {
                   download(context, linkController.text, nameController.text);
+                  linkController.text = '';
                 }
               },
             ),
