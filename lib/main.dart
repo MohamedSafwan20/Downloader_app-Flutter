@@ -21,7 +21,8 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.amber,
         accentColor: Colors.grey[850],
-        disabledColor: Colors.grey[600],
+        disabledColor: Colors.grey[700],
+        indicatorColor: Colors.green[700],
         textTheme: Theme.of(context)
             .textTheme
             .apply(bodyColor: Colors.white, displayColor: Colors.white),

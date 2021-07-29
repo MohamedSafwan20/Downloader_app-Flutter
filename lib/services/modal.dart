@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'dart:ui';
 
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:downloader/views/home.dart';
 import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -12,12 +13,15 @@ import '../styles/buttons.dart';
 
 var taskId;
 
+TextEditingController linkController = TextEditingController();
+TextEditingController nameController = TextEditingController();
+
 void downloadCallback(String id, DownloadTaskStatus status, int progress) {
   final SendPort? send = IsolateNameServer.lookupPortByName('downloaderport');
   send?.send({"id": id, "status": status, "progress": progress});
 }
 
-download(BuildContext context, var link, var fileName) async {
+download(BuildContext context, String link, String fileName) async {
   var downloadsDirectory = await ExtStorage.getExternalStoragePublicDirectory(
       ExtStorage.DIRECTORY_DOWNLOADS);
   if (Directory(downloadsDirectory).existsSync()) {
@@ -44,9 +48,6 @@ download(BuildContext context, var link, var fileName) async {
 }
 
 showDownloaderModal(BuildContext context) {
-  TextEditingController linkController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -109,7 +110,11 @@ showDownloaderModal(BuildContext context) {
                 style: CustomButtonStyle.textButtonPrimary,
               ),
               onPressed: () {
-                download(context, linkController.text, nameController.text);
+                if (linkController.text == '' && nameController.text == '') {
+                  // TODO: show snackbar for empty inputs
+                } else {
+                  download(context, linkController.text, nameController.text);
+                }
               },
             ),
           ],
