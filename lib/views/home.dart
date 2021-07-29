@@ -48,12 +48,7 @@ class _HomeState extends State<Home> {
         body: Column(
           children: [
             DownloadingListItem(),
-            GetFilesFromDownloads(),
-            ElevatedButton(
-                onPressed: () {
-                  FlutterDownloader.cancel(taskId: modal.taskId);
-                },
-                child: Text("click"))
+            // GetFilesFromDownloads(),
           ],
         ));
   }

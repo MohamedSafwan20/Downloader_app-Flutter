@@ -38,7 +38,6 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
   Widget build(BuildContext context) {
     return downloadInfo["status"] == DownloadTaskStatus.running
         ? Container(
-            // color: Colors.blue,
             width: double.infinity,
             //TODO: this takes full height of parent
             // height: 70,

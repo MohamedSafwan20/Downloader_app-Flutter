@@ -1,3 +1,4 @@
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 
 class DownloadedFileListItem extends StatefulWidget {
@@ -29,8 +30,10 @@ class _DownloadedFileListItemState extends State<DownloadedFileListItem> {
                     Icons.download_done,
                     color: Theme.of(context).primaryColor,
                   ),
-                  Text(widget.fileName),
-                  Text(widget.fileSize,
+                  Text(
+                    widget.fileName,
+                  ),
+                  Text(filesize(widget.fileSize),
                       style: TextStyle(color: Theme.of(context).disabledColor)),
                 ],
               ),

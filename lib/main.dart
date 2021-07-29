@@ -23,6 +23,7 @@ class App extends StatelessWidget {
         accentColor: Colors.grey[850],
         disabledColor: Colors.grey[700],
         indicatorColor: Colors.green[700],
+        errorColor: Colors.red[600],
         textTheme: Theme.of(context)
             .textTheme
             .apply(bodyColor: Colors.white, displayColor: Colors.white),
