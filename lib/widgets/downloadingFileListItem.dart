@@ -17,6 +17,8 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
 
   ReceivePort receivePort = ReceivePort();
 
+  bool isPaused = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,8 +38,24 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return downloadInfo["status"] == DownloadTaskStatus.running
-        ? Container(
+    if (downloadInfo["status"] == DownloadTaskStatus.running ||
+        downloadInfo['status'] == DownloadTaskStatus.paused) {
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (isPaused) {
+            FlutterDownloader.resume(taskId: downloadInfo['id']);
+            setState(() {
+              isPaused = false;
+            });
+          } else {
+            FlutterDownloader.pause(taskId: downloadInfo['id']);
+            setState(() {
+              isPaused = true;
+            });
+          }
+        },
+        child: Container(
             width: double.infinity,
             //TODO: this takes full height of parent
             // height: 70,
@@ -76,9 +94,10 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
                   ],
                 ),
               ],
-            ))
-        : Container(
-            child: Text("hi"),
-          );
+            )),
+      );
+    } else {
+      return Container();
+    }
   }
 }

@@ -11,8 +11,6 @@ import 'package:http/http.dart' as http;
 
 import '../styles/buttons.dart';
 
-var taskId;
-
 String fileSize = '';
 
 TextEditingController linkController = TextEditingController();
@@ -37,7 +35,7 @@ download(BuildContext context, String link, String fileName) async {
   fileSize = filesize(res.headers['content-length']);
 
   if (Directory(downloadsDirectory).existsSync()) {
-    taskId = await FlutterDownloader.enqueue(
+    await FlutterDownloader.enqueue(
       url:
           "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-602.exe",
       savedDir: downloadsDirectory,
