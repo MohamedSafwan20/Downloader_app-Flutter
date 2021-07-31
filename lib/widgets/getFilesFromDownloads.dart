@@ -8,7 +8,6 @@ import 'package:downloader/widgets/DownloadedFileListItem.dart';
 import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_manager/flutter_file_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class GetFilesFromDownloads extends StatefulWidget {
   const GetFilesFromDownloads({Key key}) : super(key: key);
@@ -21,22 +20,18 @@ class _GetFilesFromDownloadsState extends State<GetFilesFromDownloads> {
   var filesfromDownloads;
 
   getFilesfromDownloads() async {
-    PermissionStatus status = await Permission.storage.request();
+    // if (status.isGranted) {
+    //   var downloadsDirectory =
+    //       await ExtStorage.getExternalStoragePublicDirectory(
+    //           ExtStorage.DIRECTORY_DOWNLOADS);
 
-    if (status.isGranted) {
-      var downloadsDirectory =
-          await ExtStorage.getExternalStoragePublicDirectory(
-              ExtStorage.DIRECTORY_DOWNLOADS);
-
-      var files = await FileManager(root: Directory(downloadsDirectory))
-          .walk()
-          .toList();
-      return files;
-    } else if (status.isPermanentlyDenied) {
-      // TODO: show snackbar
-      openAppSettings();
-    } else
-      return [];
+    //   var files = await FileManager(root: Directory(downloadsDirectory))
+    //       .walk()
+    //       .toList();
+    //   return files;
+    // } else if (status.isPermanentlyDenied) {
+    // } else
+    //   return [];
   }
 
   @override

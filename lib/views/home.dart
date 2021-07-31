@@ -4,6 +4,7 @@ import 'package:downloader/widgets/downloadingFileListItem.dart';
 import 'package:downloader/widgets/getFilesFromDownloads.dart';
 import 'package:ext_storage/ext_storage.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_file_manager/flutter_file_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,9 +20,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  getPermission() async {
+    PermissionStatus status = await Permission.storage.request();
+    if (status.isPermanentlyDenied) {
+      // TODO: show snackbar
+      openAppSettings();
+    } else if (status.isDenied) {
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getPermission();
   }
 
   @override
@@ -34,8 +47,11 @@ class _HomeState extends State<Home> {
           ),
           actions: [
             IconButton(
-                onPressed: () async {
-                  modal.showDownloaderModal(context);
+                disabledColor: Theme.of(context).disabledColor,
+                onPressed: () {
+                  DownloadingListItem.isDownloading
+                      ? null
+                      : modal.showDownloaderModal(context);
                 },
                 icon: Icon(
                   Icons.add,
@@ -47,8 +63,12 @@ class _HomeState extends State<Home> {
         backgroundColor: Theme.of(context).accentColor,
         body: Column(
           children: [
-            DownloadingListItem(),
-            // GetFilesFromDownloads(),
+            Container(child: DownloadingListItem()),
+            ElevatedButton(
+                onPressed: () async {
+                  await FlutterDownloader.cancel(taskId: modal.taskId);
+                },
+                child: Text("hi"))
           ],
         ));
   }
