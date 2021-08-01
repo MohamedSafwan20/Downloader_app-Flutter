@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
                 disabledColor: Theme.of(context).disabledColor,
                 onPressed: () {
                   DownloadingListItem.isDownloading
+                      // TODO: show snackbar for already have pending download
                       ? null
                       : modal.showDownloaderModal(context);
                 },
@@ -64,11 +65,6 @@ class _HomeState extends State<Home> {
         body: Column(
           children: [
             Container(child: DownloadingListItem()),
-            ElevatedButton(
-                onPressed: () async {
-                  await FlutterDownloader.cancel(taskId: modal.taskId);
-                },
-                child: Text("hi"))
           ],
         ));
   }

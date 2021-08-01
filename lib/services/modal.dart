@@ -61,10 +61,6 @@ showDownloaderModal(BuildContext context) {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                  '800mb',
-                  style: TextStyle(color: Theme.of(context).disabledColor),
-                ),
                 Container(
                   margin: const EdgeInsets.all(5.0),
                   child: Column(
@@ -125,4 +121,3 @@ showDownloaderModal(BuildContext context) {
         );
       });
 }
-// https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-602.exe

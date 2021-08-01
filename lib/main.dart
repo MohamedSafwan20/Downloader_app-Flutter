@@ -1,3 +1,4 @@
+import 'package:downloader/widgets/getFilesFromDownloads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import './views/home.dart';
@@ -17,6 +18,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Home(title: 'Downloader'),
+        '/finished': (context) => const GetFilesFromDownloads()
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.amber,
@@ -29,7 +35,6 @@ class App extends StatelessWidget {
             .apply(bodyColor: Colors.white, displayColor: Colors.white),
         primarySwatch: Colors.amber,
       ),
-      home: Home(title: 'Downloader'),
     );
   }
 }

@@ -1,9 +1,11 @@
 // Unsounding dart null-safety
 // @dart=2.9
 
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:downloader/styles/buttons.dart';
 import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -27,13 +29,14 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
   bool isPaused = false;
   bool isPendingDownloadPaused = true;
 
-  var pendingDownload;
+  Stream pendingDownload;
+  StreamController pendingDownloadController;
   var pendingDownloadFileSize = "0";
 
-  loadPausedTasks() async {
+  loadPausedTasks() async* {
     final tasks = await FlutterDownloader.loadTasksWithRawQuery(
         query: "SELECT * FROM task WHERE status=6");
-    return tasks;
+    yield tasks;
   }
 
   getFileSize(String url) async {
@@ -43,11 +46,65 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
     });
   }
 
+  showDeleteModal(BuildContext context, {String taskId = ''}) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Theme.of(context).accentColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(17.0)),
+            content: SingleChildScrollView(
+              child: ListBody(children: [
+                Container(
+                  margin: const EdgeInsets.all(10.0),
+                  child: Text(
+                    "Downloader",
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 20),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(5.0),
+                  child: Text(
+                    "Cancel the download?",
+                  ),
+                ),
+              ]),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  'Yes',
+                  style: CustomButtonStyle.textButtonSecondary,
+                ),
+                onPressed: () {
+                  FlutterDownloader.remove(
+                      taskId: taskId != '' ? taskId : downloadInfo['id'],
+                      shouldDeleteContent: false);
+                  setState(() {
+                    downloadInfo['status'] = DownloadTaskStatus.undefined;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text(
+                  'No',
+                  style: CustomButtonStyle.textButtonPrimary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
-
-    pendingDownload = loadPausedTasks();
 
     IsolateNameServer.registerPortWithName(
         receivePort.sendPort, "downloaderport");
@@ -64,15 +121,20 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: pendingDownload,
+    return StreamBuilder(
+        stream: loadPausedTasks(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data.length > 0) {
+              DownloadingListItem.isDownloading = true;
+
               getFileSize(snapshot.data[0].url);
 
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
+                onLongPress: () {
+                  showDeleteModal(context, taskId: snapshot.data[0].taskId);
+                },
                 onTap: () {
                   if (isPendingDownloadPaused) {
                     FlutterDownloader.resume(
@@ -133,6 +195,7 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
                     )),
               );
             }
+
             if (downloadInfo["status"] == DownloadTaskStatus.running ||
                 downloadInfo['status'] == DownloadTaskStatus.paused) {
               String fileName = modal.nameController.text;
@@ -142,6 +205,9 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
 
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
+                onLongPress: () {
+                  showDeleteModal(context);
+                },
                 onTap: () {
                   if (isPaused) {
                     FlutterDownloader.resume(taskId: downloadInfo['id']);
