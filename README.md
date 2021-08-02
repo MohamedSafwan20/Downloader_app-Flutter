@@ -1,4 +1,6 @@
-# downloader
+# Downloader
+
+  Simple downloader app with functionalities such as pause, resume and delete.
 
 A new Flutter project.
 
