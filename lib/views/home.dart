@@ -1,12 +1,7 @@
-import 'dart:io';
-
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:downloader/widgets/downloadingFileListItem.dart';
-import 'package:downloader/widgets/getFilesFromDownloads.dart';
-import 'package:ext_storage/ext_storage.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_file_manager/flutter_file_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import "../services/modal.dart" as modal;
@@ -23,7 +18,9 @@ class _HomeState extends State<Home> {
   getPermission() async {
     PermissionStatus status = await Permission.storage.request();
     if (status.isPermanentlyDenied) {
-      // TODO: show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Please grant permission for storage access",
+              style: TextStyle(color: Theme.of(context).primaryColor))));
       openAppSettings();
     } else if (status.isDenied) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -50,8 +47,11 @@ class _HomeState extends State<Home> {
                 disabledColor: Theme.of(context).disabledColor,
                 onPressed: () {
                   DownloadingListItem.isDownloading
-                      // TODO: show snackbar for already have pending download
-                      ? null
+                      ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "A download is in progress, please wait until it finishes",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor))))
                       : modal.showDownloaderModal(context);
                 },
                 icon: Icon(

@@ -1,7 +1,6 @@
 // Unsounding dart null-safety
 // @dart=2.9
 
-import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -9,9 +8,9 @@ import 'package:downloader/styles/buttons.dart';
 import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:http/http.dart' as http;
 
 import '../services/modal.dart' as modal;
-import 'package:http/http.dart' as http;
 
 class DownloadingListItem extends StatefulWidget {
   static bool isDownloading = false;
@@ -29,8 +28,6 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
   bool isPaused = false;
   bool isPendingDownloadPaused = true;
 
-  Stream pendingDownload;
-  StreamController pendingDownloadController;
   var pendingDownloadFileSize = "0";
 
   loadPausedTasks() async* {
@@ -113,7 +110,6 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
       setState(() {
         downloadInfo = info;
       });
-      print("Main: $downloadInfo");
     });
 
     FlutterDownloader.registerCallback(modal.downloadCallback);
@@ -151,8 +147,6 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
                 },
                 child: Container(
                     width: double.infinity,
-                    //TODO: this takes full height of parent
-                    // height: 70,
                     padding: EdgeInsets.all(15.0),
                     child: Column(
                       children: [
@@ -209,22 +203,15 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
                   showDeleteModal(context);
                 },
                 onTap: () {
-                  if (isPaused) {
+                  if (downloadInfo['status'] == DownloadTaskStatus.paused) {
                     FlutterDownloader.resume(taskId: downloadInfo['id']);
-                    setState(() {
-                      isPaused = false;
-                    });
                   } else {
+                    print(isPaused);
                     FlutterDownloader.pause(taskId: downloadInfo['id']);
-                    setState(() {
-                      isPaused = true;
-                    });
                   }
                 },
                 child: Container(
                     width: double.infinity,
-                    //TODO: this takes full height of parent
-                    // height: 70,
                     padding: EdgeInsets.all(15.0),
                     child: Column(
                       children: [
@@ -249,13 +236,18 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
                             LinearProgressIndicator(
                               backgroundColor: Theme.of(context).disabledColor,
                               valueColor: AlwaysStoppedAnimation(
-                                  Theme.of(context).indicatorColor),
+                                  downloadInfo['status'] ==
+                                          DownloadTaskStatus.paused
+                                      ? Colors.yellow
+                                      : Theme.of(context).indicatorColor),
                               minHeight: 20,
                               value: downloadInfo['progress'] / 100,
                             ),
                             Align(
-                              child: Text(
-                                  '${downloadInfo['progress']}%'.toString()),
+                              child: Text(downloadInfo['status'] ==
+                                      DownloadTaskStatus.paused
+                                  ? "Paused"
+                                  : '${downloadInfo['progress']}%'.toString()),
                               alignment: Alignment.center,
                             ),
                           ],
@@ -268,8 +260,7 @@ class _DownloadingListItemState extends State<DownloadingListItem> {
               return Container();
             }
           } else {
-            // TODO: add snackbar
-            return Text("Restart app");
+            return Container();
           }
         });
   }

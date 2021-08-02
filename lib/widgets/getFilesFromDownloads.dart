@@ -1,13 +1,11 @@
 // For unsounding null-safety of dart
 // @dart=2.9
 
-import 'dart:io';
 import 'dart:core';
+import 'dart:io';
 
 import 'package:downloader/widgets/DownloadedFileListItem.dart';
-import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_manager/flutter_file_manager.dart';
 
 class GetFilesFromDownloads extends StatefulWidget {
   const GetFilesFromDownloads({Key key}) : super(key: key);
