@@ -7,9 +7,7 @@ import './views/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(
-      // TODO: set debug to false
-      debug: true);
+  await FlutterDownloader.initialize(debug: false);
 
   runApp(App());
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:downloader/styles/buttons.dart';
 import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 
 class DownloadedFileListItem extends StatefulWidget {
   const DownloadedFileListItem(
@@ -84,6 +85,9 @@ class _DownloadedFileListItemState extends State<DownloadedFileListItem> {
       onLongPress: () {
         showDeleteModal(context, widget.file);
       },
+      onTap: () {
+        OpenFile.open(widget.file.path);
+      },
       child: Container(
           width: double.infinity,
           padding: EdgeInsets.all(15.0),
@@ -99,7 +103,9 @@ class _DownloadedFileListItemState extends State<DownloadedFileListItem> {
                       color: Theme.of(context).primaryColor,
                     ),
                     Text(
-                      widget.fileName,
+                      widget.fileName.length >= 35
+                          ? "${widget.fileName.substring(0, 32)}..."
+                          : widget.fileName,
                     ),
                     Text(filesize(widget.fileSize),
                         style:
