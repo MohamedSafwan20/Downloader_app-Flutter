@@ -61,6 +61,50 @@ class _HomeState extends State<Home> {
                 ))
           ],
         ),
+        drawer: Drawer(
+          child: Container(
+            margin: EdgeInsets.only(top: 28),
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.all(Radius.elliptical(20, 20)),
+                  ),
+                  child: ListTile(
+                    title: const Text(
+                      'Downloading',
+                      style: TextStyle(color: Colors.amber),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/');
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.all(Radius.elliptical(20, 20)),
+                  ),
+                  child: ListTile(
+                    title: const Text(
+                      'Finished',
+                      style: TextStyle(color: Colors.amber),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/finished');
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).accentColor,
         body: Column(
           children: [
