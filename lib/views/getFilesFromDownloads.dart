@@ -17,8 +17,6 @@ class GetFilesFromDownloads extends StatefulWidget {
 }
 
 class _GetFilesFromDownloadsState extends State<GetFilesFromDownloads> {
-  var filesfromDownloads;
-
   getFilesfromDownloads() async* {
     var downloadsDirectory = await ExtStorage.getExternalStoragePublicDirectory(
         ExtStorage.DIRECTORY_DOWNLOADS);
@@ -32,8 +30,6 @@ class _GetFilesFromDownloadsState extends State<GetFilesFromDownloads> {
   @override
   void initState() {
     super.initState();
-
-    filesfromDownloads = getFilesfromDownloads();
   }
 
   @override

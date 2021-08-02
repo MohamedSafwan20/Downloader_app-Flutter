@@ -54,9 +54,13 @@ class _DownloadedFileListItemState extends State<DownloadedFileListItem> {
                   style: CustomButtonStyle.textButtonSecondary,
                 ),
                 onPressed: () {
-                  print(file);
-                  file.deleteSync();
                   Navigator.of(context).pop();
+                  file.deleteSync();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          "File successfully deleted. please refresh the page",
+                          style: TextStyle(
+                              color: Theme.of(context).indicatorColor))));
                 },
               ),
               TextButton(
