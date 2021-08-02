@@ -1,5 +1,5 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:downloader/widgets/getFilesFromDownloads.dart';
+import 'package:downloader/views/getFilesFromDownloads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 

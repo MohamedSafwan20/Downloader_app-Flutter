@@ -106,10 +106,6 @@ class _HomeState extends State<Home> {
           ),
         ),
         backgroundColor: Theme.of(context).accentColor,
-        body: Column(
-          children: [
-            Container(child: DownloadingListItem()),
-          ],
-        ));
+        body: Container(child: DownloadingListItem()));
   }
 }
